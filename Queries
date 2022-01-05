@@ -1,0 +1,193 @@
+Note : This Project is done using Google Bigquery and report is made on google data studio
+QUERIES:
+
+1. What are the most common crimes in Chicago, and how have they changed over the last two decades?
+
+SQL QUERY:
+
+SELECT 
+DISTINCT primary_type as CRIME_TYPE,
+COUNT(*)  as TOTAL_CRIME_COUNT,
+year FROM `bigquery-public-data.chicago_crime.crime`  
+group by CRIME_TYPE,year 
+order by TOTAL_CRIME_COUNT DESC
+
+
+GRAPH FROM GOOGLE DATA STUDIO:
+https://datastudio.google.com/u/0/reporting/79c8b57a-755a-44fc-99f6-2bc58aca6c19/page/aaUgC?s=shh4bfftXNY
+ 
+
+
+INFERENCES:
+The time series graph explains the trends of various crimes over the past 2 decades. From the graph theft is the most occurring crime in the Chicago area which was almost around 100k in the year 2001 however has reduced to 35k in the year 2021, November. Almost all the crimes were drastically reduced which include many reasons. 
+One of the major reasons is security that is the improved and more widespread security devices like electronic immobilizers and central locking, were responsible for a large part of the crime drop by preventing numerous crimes. We’ve seen a sharp increase for theft from 2007 to 2008 we think it is correlated to the great depression that began in 2007 till 2009 which might have caused people to resort to theft. After Theft the dominating crime is battery (intentionally making harmful or offensive physical contact with another person without their consent) which was around 93.5k in 2001 and became more than theft in 2021 with record of 36k. Criminal damage and Narcotics were also the major crimes in 2001 and as time passed Narcotics has reduced a way more than any other crime from 50.5k in 2001 to 3.7k in 2021.
+
+2.  From 2001 to 2021, what is the percentage change in each crime?
+
+SQL QUERY:
+
+SELECT
+  primary_type,
+  COUNTIF(year = 2001) AS crime_2001,
+  COUNTIF(year = 2021) AS crime_2021,
+  ((COUNTIF(year = 2021) - COUNTIF(year = 2001)) / COUNTIF(year = 2001)*100) AS pct_change_2001_to_2021
+FROM
+  `bigquery-public-data.chicago_crime.crime`
+WHERE
+year IN (2001,
+    2021)
+GROUP BY
+  primary_type
+HAVING
+  COUNTIF(year = 2001) >= 100
+ORDER BY
+  COUNTIF(year = 2021)  DESC;
+
+
+GRAPH FROM GOOGLE DATA STUDIO:
+https://datastudio.google.com/u/0/reporting/79c8b57a-755a-44fc-99f6-2bc58aca6c19/page/p_edyuju0qpc?s=shh4bfftXNY
+ 
+
+
+INFERENCES:
+The percentage change in the crime rate is calculated for all the crimes and we can observe that all most all the crimes have a negative value which indicates that there is a reduction in the crime over the 2 decades but 3 of them are positive. Weapons violation, stalking and homicide are the crimes which were less in the past and have increased now. Especially the weapons violation has almost doubled in its count from 2001 to 2021 which shows that usage of deadly weapons such as firearms, cutting instruments, explosives has increased among the people.
+We can observe a drastic reduction around 90% for few crimes like Narcotics, Gambling, Prostitution and Crime Sexual Assault. According to the Illinois state law, Gambling is legal for people above 21 years. It is also considered legal when played in public.
+
+
+3. Crimes occur more frequently in some areas. What are the crime rates in each locality during the last 20 years?
+
+SQL QUERY:
+
+SELECT 
+COUNT(location_description) AS total ,
+location_description, 
+year 
+FROM `bigquery-public-data.chicago_crime.crime` 
+GROUP BY year,location_description 
+ORDER BY year;  
+
+
+GRAPH FROM GOOGLE DATA STUDIO:
+https://datastudio.google.com/u/0/reporting/79c8b57a-755a-44fc-99f6-2bc58aca6c19/page/p_l1lzmh6qpc?s=shh4bfftXNY
+ 
+
+
+INFERENCES:
+The report says about the percentage of crimes in each locality from 2001 to 2021.The data represented that “STREET” is the most dangerous place in every year with almost 30% because it is correlated to how culprits could easily get away from the streets where they would know the easiest way to escape since they are familiar with the areas and the crowded streets. “RESIDENCE” and “APARTMENT” are the next most dangerous places in the Chicago city.
+The COVID pandemic influenced the crime rate, with areas such as schools and public buildings recording very few crimes as people stayed at home due to the lockdown, which ultimately increased crime in places such as apartments and streets. The major reasons for these crimes may be because of poverty, unemployment, or lack of support from the society. 
+
+
+4. Are there any links between the crimes and the locations? What are the most common places for crimes to occur?
+
+SQL QUERY:
+
+ SELECT
+ DISTINCT primary_type as CRIME_TYPE, 
+location_description AS LOCALITY, 
+COUNT(*) as TOTAL_CRIME_COUNT 
+from `bigquery-public-data.chicago_crime.crime` 
+GROUP BY primary_type, location_description 
+ORDER BY TOTAL_CRIME_COUNT DESC;
+
+
+GRAPH FROM GOOGLE DATA STUDIO:
+https://datastudio.google.com/u/0/reporting/79c8b57a-755a-44fc-99f6-2bc58aca6c19/page/p_g2956g0qpc?s=shh4bfftXNY 
+
+
+INFERENCES:
+This slide is about the count of each crime in all the localities, we can observe that streets are the places where maximum crime has taken place followed by residence. Commercial/business offices, department stores, grocery food stores, restaurants were few of the places where chances of committing crime is very less. It might be because these properties are monitored 24*7 either by security cameras or security guards causing in less chances of committing the crime.
+We can also observe that crime rate also depends on the locality where the crime is committed. For example, robbery is committed mostly in the streets and sidewalks but very less in business or commercial offices, schools, public buildings etc. Whereas deceptive practice is mostly happening in residential areas. Burglary is committed more often in residences, garages, and apartments. this might explain the previous point why crimes depend on localities.
+
+5. Are all of Chicago's criminals apprehended? What is the arrest rate in comparison to the non-arrest rate?
+
+SQL QUERY:
+
+SELECT 
+DISTINCT primary_type as CRIME_TYPE,
+COUNT(primary_type) AS TOTAL_ARREST_COUNT,
+arrest 
+FROM `bigquery-public-data.chicago_crime.crime`
+GROUP BY primary_type,arrest ;
+
+
+GRAPH FROM GOOGLE DATA STUDIO:
+https://datastudio.google.com/u/0/reporting/79c8b57a-755a-44fc-99f6-2bc58aca6c19/page/p_bwuudkzqpc?s=shh4bfftXNY
+ 
+
+
+INFERENCES:
+This graph explains the percentage of arrests and non-arrests after a crime is committed.
+For example, if we consider theft, only 11.53% of total criminals were arrested.
+Theft can include taking money, labor, or possessions. This is typically classified as a misdemeanor offense, which means that the guilty will not have to spend time behind bars.  Instead, they will have to pay a criminal fine.  If they have stolen items of high value, they may end up spending less than a year in jail, as determined by the judge during sentencing.  Some cases involving theft may even be less severe, only resulting in citations or a small fine. May be this explains the arrest rate not as high as even 50%. If we consider Narcotics, almost all the criminals were arrested. we are assuming that. It might be due to the fact that narcotics happens with a chain of people involving it and if one is caught it is easy to catch the others as well. It can also be interpreted that evolution of technology in the past two decades is helping the criminals in escaping the charge or without getting arrested and the police to catch the criminals as well.
+
+
+6. Which is more prevalent in Chicago, domestic or non-domestic crime? What are the most common domestic crimes and non-domestic crimes?
+
+SQL QUERY:
+
+SELECT 
+primary_type as CRIME_TYPE,
+COUNTIF(domestic IS TRUE ) as domestic_crimes,
+COUNTIF(domestic IS FALSE) as non_domestic_crimes,
+year 
+FROM `bigquery-public-data.chicago_crime.crime` 
+GROUP BY primary_type,year 
+ORDER BY year;
+
+
+GRAPH FROM GOOGLE DATA STUDIO:
+https://datastudio.google.com/u/0/reporting/79c8b57a-755a-44fc-99f6-2bc58aca6c19/page/p_b84w0j7qpc?s=shh4bfftXNY
+
+ 
+
+
+INFERENCES:
+This report explains the domestic crimes, non-domestic crimes, and the comparison between them. 
+Domestic violence is a crime between people in a relationship with the intent to control, intimidate, or manipulate the other like theft, assault, sexual assault, deceptive practice and many more. Whereas Non-domestic violence occurs when someone attempts to or succeeds to injure another person. This includes theft, narcotics, burglary, battery etc. Battery is the most often committed crime among all the domestic crimes whereas deceptive practice is the least committed domestic crime. Similarly, theft is the most committed domestic crime and deceptive practice is the least. We can observe that though there is a reduction in the non - domestic crime count over the years it is always higher than the domestic crimes committed. It might be because many of the domestic violence acts are unreported. There is not much change in the domestic crime count for all the 20 years.
+
+
+
+7. From 2001 through 2021, what are the different types of crime and their subcategories in Chicago?
+
+SQL QUERY:
+
+SELECT
+ DISTINCT description,
+primary_type as CRIME_TYPE,
+COUNT(primary_type) as TOTAL_CRIME_TYPES 
+FROM `bigquery-public-data.chicago_crime.crime` 
+GROUP BY primary_type,description 
+ORDER BY  TOTAL_CRIME_TYPES DESC;
+
+
+GRAPH FROM GOOGLE DATA STUDIO:
+https://datastudio.google.com/u/0/reporting/79c8b57a-755a-44fc-99f6-2bc58aca6c19/page/p_e1g2v9bspc?s=shh4bfftXNY
+ 
+
+
+INFERENCES:
+This sun burst chart describes the percentage of each crime and its categories.
+The inner circle represents the percentage of each crime, and the outer circle represents the subcategory’s description along with the percentage.
+If we consider theft, it sums up to 21% of the total crimes in which there are around 10 subcategories like retail theft, financial ID theft, pocket picking etc. The theft valuation of under 500% has been major crime committed comprising 39% of the total theft. Assault is one of major crimes with a 6% of the total crime. Subcategory simple is the major crime of all the assaults with 69% of the assault.
+
+8. What are Chicago's crime hotspots?
+
+SQL QUERY:
+SELECT 
+ST_GEOGPOINT(longitude, latitude) AS geographic_location
+FROM `bigquery-public-data`.chicago_crime.crime
+WHERE
+ longitude IS NOT NULL AND latitude IS NOT NULL;
+
+
+GRAPH FROM GOOGLE DATA STUDIO:
+https://datastudio.google.com/u/0/reporting/79c8b57a-755a-44fc-99f6-2bc58aca6c19/page/p_reutuf1qpc?s=shh4bfftXNY
+
+ 
+
+
+INFERENCES:
+This report is about the map explaining the areas where the crime rate is high. We have taken the coordinates of the localities into consideration to plot this map. Clearly the localities like Edison Park, Norwood Park, Jefferson Park, portage park, dunning park of the northern part of Chicago and the neighborhood of South Deering in the south are the most dangerous places of Chicago. This helps the public to select the localities which are safer to live or commute.
+
+
+
